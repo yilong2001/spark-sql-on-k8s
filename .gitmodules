@@ -1,0 +1,3 @@
+[submodule "kyuubi"]
+	path = kyuubi
+	url = https://github.com/yilong2001/kyuubi.git
