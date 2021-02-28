@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik
+  namespace: kube-system
+
+spec:
+  externalTrafficPolicy: Cluster
+  ports:
+    - protocol: TCP
+      name: web
+      port: 80
+    - protocol: TCP
+      name: websecure
+      port: 443
+    - protocol: TCP
+      name: admin
+      port: 8080
+    - protocol: TCP
+      name: mysql
+      port: 3306
+    - protocol: TCP
+      name: postgresql
+      port: 5432
+    - protocol: TCP
+      name: hive2
+      port: 10019
+  selector:
+    app: traefik
+  externalIPs:
+    - 192.168.42.152
+  type: LoadBalancer

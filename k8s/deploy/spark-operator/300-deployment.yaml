@@ -1,0 +1,64 @@
+---
+# Source: spark-operator/templates/deployment.yaml
+# If the admission webhook is enabled, then a post-install step is required
+# to generate and install the secret in the operator namespace.
+
+# In the post-install hook, the token corresponding to the operator service account
+# is used to authenticate with the Kubernetes API server to install the secret bundle.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-spark-operator
+  labels:
+    helm.sh/chart: spark-operator-1.0.0
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark
+    app.kubernetes.io/version: "v1beta2-1.2.0-3.0.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: spark-operator
+      app.kubernetes.io/instance: spark
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"
+        prometheus.io/path: /metrics
+      labels:
+        app.kubernetes.io/name: spark-operator
+        app.kubernetes.io/instance: spark
+    spec:
+      serviceAccountName: spark-spark-operator
+      securityContext:
+        {}
+      containers:
+      - name: spark-operator
+        image: registry.cn-beijing.aliyuncs.com/yilong2001/spark-operator:v1beta2-1.2.0-3.0.0
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          {}
+        ports:
+          - name: metrics
+            containerPort: 10254
+        
+        args:
+        - -v=2
+        - -logtostderr
+        - -namespace=spark-jobs
+        - -ingress-url-format=
+        - -controller-threads=10
+        - -resync-interval=30
+        - -enable-batch-scheduler=false
+        - -enable-metrics=true
+        - -metrics-labels=app_type
+        - -metrics-port=10254
+        - -metrics-endpoint=/metrics
+        - -metrics-prefix=
+        - -enable-resource-quota-enforcement=false
+        resources:
+          {}

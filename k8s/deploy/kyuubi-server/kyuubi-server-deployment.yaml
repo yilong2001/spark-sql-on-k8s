@@ -1,0 +1,84 @@
+---
+# Source: spark-operator/templates/deployment.yaml
+# If the admission webhook is enabled, then a post-install step is required
+# to generate and install the secret in the operator namespace.
+
+# In the post-install hook, the token corresponding to the operator service account
+# is used to authenticate with the Kubernetes API server to install the secret bundle.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-kyuubi-server-deploy
+  namespace: spark-operator
+  labels:
+    app.kubernetes.io/name: spark-kyuubi-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: spark-kyuubi-server
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"
+        prometheus.io/path: /metrics
+      labels:
+        app.kubernetes.io/name: spark-kyuubi-server
+    spec:
+      serviceAccountName: spark-spark-operator
+      securityContext:
+        {}
+      containers:
+      - name: kyuubi-server
+        image: kyuubi-server:v1.0
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          {}
+        ports:
+          - name: jdbc
+            containerPort: 10009
+        args:
+        - --conf
+        - spark.application.operator.service.name=spark-sparkop-svc
+        - --conf
+        - spark.application.operator.service.port=8085
+        resources:
+          {}
+
+---
+# spark-kyuubi-server service
+kind: Service
+apiVersion: v1
+metadata:
+  name: spark-kyuubi-server-svc
+  namespace: spark-operator
+  labels:
+    app.kubernetes.io/name: spark-kyuubi-server
+spec:
+  ports:
+  - name: jdbc
+    port: 10019
+    protocol: TCP
+    targetPort: 10009
+  selector:
+    app.kubernetes.io/name: spark-kyuubi-server
+
+---
+# spark-kyuubi-server route
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: spark-server-jdbc-ingress
+  namespace: spark-operator
+spec:
+  entryPoints:
+    - hive2
+  routes:
+  - match: HostSNI(`*`)
+    services:
+    - name: spark-kyuubi-server-svc
+      port: 10019

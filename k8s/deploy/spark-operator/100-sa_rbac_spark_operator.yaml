@@ -1,0 +1,148 @@
+---
+# Source: spark-operator/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spark-spark-operator
+  namespace: spark-operator
+  labels:
+    helm.sh/chart: spark-operator-1.0.0
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark
+    app.kubernetes.io/version: "v1beta2-1.2.0-3.0.0"
+
+
+---
+# Source: spark-operator/templates/rbac.yaml : Cluster 范围内角色权限
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: spark-spark-operator
+  labels:
+    helm.sh/chart: spark-operator-1.0.0
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark
+    app.kubernetes.io/version: "v1beta2-1.2.0-3.0.0"
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - "*"
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - configmaps
+  - secrets
+  verbs:
+  - create
+  - get
+  - delete
+  - update
+- apiGroups:
+  - extensions
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - create
+  - get
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - update
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - resourcequotas
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - create
+  - get
+  - update
+  - delete
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - mutatingwebhookconfigurations
+  - validatingwebhookconfigurations
+  verbs:
+  - create
+  - get
+  - update
+  - delete
+- apiGroups:
+  - sparkoperator.k8s.io
+  resources:
+  - sparkapplications
+  - sparkapplications/status
+  - scheduledsparkapplications
+  - scheduledsparkapplications/status
+  verbs:
+  - "*"
+
+---
+# Source: spark-operator/templates/rbac.yaml  
+# account : spark-spark-operator(spark-operator) account ; spark(spark-jobs) account ; 
+# authorization: cluster-wide, spark operator;
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: spark-spark-operator
+  labels:
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark
+    app.kubernetes.io/version: "v1beta2-1.2.0-3.0.0"
+subjects:
+  - kind: ServiceAccount
+    name: spark-spark-operator
+    namespace: spark-operator
+  - kind: ServiceAccount
+    name: spark
+    namespace: spark-jobs
+roleRef:
+  kind: ClusterRole
+  name: spark-spark-operator
+  apiGroup: rbac.authorization.k8s.io
+
+
+---
+#
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-admin-to-spark-operator
+  labels:
+    app.kubernetes.io/name: spark-operator
+    app.kubernetes.io/instance: spark
+    app.kubernetes.io/version: "v1beta2-1.2.0-3.0.0"
+subjects:
+  - kind: ServiceAccount
+    name: spark-spark-operator
+    namespace: spark-operator
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+
+
