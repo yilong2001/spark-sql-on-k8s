@@ -1,3 +1,6 @@
 [submodule "kyuubi"]
 	path = kyuubi
 	url = https://github.com/yilong2001/kyuubi.git
+[submodule "traefik-helm-chart"]
+	path = traefik-helm-chart
+	url = https://github.com/traefik/traefik-helm-chart.git

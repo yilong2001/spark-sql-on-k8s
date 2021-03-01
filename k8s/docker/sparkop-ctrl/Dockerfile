@@ -49,7 +49,7 @@ COPY external/jars/*  /opt/jars/
 ENV SPARK_SQL_ENGINE_JAR /opt/jars/kyuubi-spark-sql-engine-1.1.0-SNAPSHOT.jar
 ENV SPARK_SQL_DRIVER_JAR_MYSQL /opt/jars/mysql-connector-java-5.1.48.jar
 ENV SPARK_SQL_DRIVER_JAR_PG /opt/jars/postgresql-42.2.18.jar
-#ENV SPARK_SQL_IMAGE_NAME gcr.io/spark-operator/spark:v3.0.1-1216
+#ENV SPARK_SQL_IMAGE_NAME registry.cn-beijing.aliyuncs.com/yilong2001/spark:v3.0.1-1216
 
 #WORKDIR /opt/sparkop
 #RUN chmod 777 /opt/bin/tini && chmod 777 /opt/sparkop/sparkappctrl && chmod 777 /opt/sparkop/traefikkit

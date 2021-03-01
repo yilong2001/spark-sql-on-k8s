@@ -65,7 +65,7 @@ const (
 	SPARK_SQL_DRIVER_JAR_MYSQL = ""
 	SPARK_SQL_DRIVER_JAR_PG = ""
 
-	DEFAULT_SPARK_SQL_IMAGE_NAME = "gcr.io/spark-operator/spark:v3.0.1-1216"
+	DEFAULT_SPARK_SQL_IMAGE_NAME = "registry.cn-beijing.aliyuncs.com/yilong2001/spark:v3.0.1-1216"
 )
 
 /*****************************************************

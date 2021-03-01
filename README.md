@@ -31,3 +31,27 @@ https://github.com/yilong2001/kyuubi
 Kyuubi is a high-performance universal JDBC and SQL execution engine, built on top ofApache Spark. The goal of Kyuubi is to facilitate users to handle big data like ordinary data.
 
 
+# k8s namespace
+
+```
+创建 namespace
+kubectl create namespace spark-operator
+kubectl create namespace spark-jobs
+kubectl create namespace spark-history
+
+```
+
+# traefik v2 crds
+
+```
+创建 traefik v2 crds
+kubectl apply -f traefik-helm-chart/traefik/crds/
+```
+
+# traefik v2 ingress
+```
+创建 traefik v2 ingress resources
+kubectl apply -f k8s/deploy/traefik-v2/
+```
+
+

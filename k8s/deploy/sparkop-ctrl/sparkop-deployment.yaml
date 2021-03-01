@@ -50,7 +50,7 @@ spec:
       - name: spark-sparkop-appctrl
         env:
         - name: SPARK_SQL_IMAGE_NAME
-          value: registry.cn-beijing.aliyuncs.com/yilong2001/spark
+          value: registry.cn-beijing.aliyuncs.com/yilong2001/spark:v3.0.1-1216
         image: sparkop-ctrl:v1.0
         imagePullPolicy: IfNotPresent
         securityContext:
