@@ -7,7 +7,7 @@ IMG_BUILDER=/mnt/hgfs/linuxtools/img-builder/img-linux-amd64
 ######################################
 echo "build kyuubi start ..."
 cd ./kyuubi
-#mvn clean install -DskipTests
+mvn clean install -DskipTests
 
 cp -f ./kyuubi-main/target/kyuubi-main-1.1.0-SNAPSHOT.jar ${curdir}/external/jars/kyuubi/
 cp -f ./kyuubi-common/target/kyuubi-common-1.1.0-SNAPSHOT.jar ${curdir}/external/jars/kyuubi/
