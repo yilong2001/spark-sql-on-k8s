@@ -31,29 +31,37 @@ https://github.com/yilong2001/kyuubi
 Kyuubi is a high-performance universal JDBC and SQL execution engine, built on top ofApache Spark. The goal of Kyuubi is to facilitate users to handle big data like ordinary data.
 
 
-# k8s namespace
+# 使用步骤如下：
 
 ```
-创建 namespace
+clone 代码，包含子模块。
+
+git clone --recursive https://github.com/yilong2001/spark-sql-on-k8s.git
+
+```
+
+# 创建 namespace (k8s namespace)
+
+```
 kubectl create namespace spark-operator
 kubectl create namespace spark-jobs
 kubectl create namespace spark-history
 
 ```
 
-# traefik v2 crds
+# 创建 traefik v2 crds
 
 ```
-创建 traefik v2 crds
 kubectl apply -f traefik-helm-chart/traefik/crds/
 ```
 
-# traefik v2 ingress
-```
-创建 traefik v2 ingress resources。
+# 创建 traefik v2 ingress resources。
 
-修改 loadbalance external ip , 如果不设置，则使用 k8s 集群内任一 ip 
-k8s/deploy/traefik-v2/004-service.yaml
+```
+首先，修改 loadbalance external ip 。
+如果不设置，则使用 k8s 集群内任一 ip。
+
+文件路径：k8s/deploy/traefik-v2/004-service.yaml
 
   externalIPs:
     - xxx.xxx.xxx.xxx
