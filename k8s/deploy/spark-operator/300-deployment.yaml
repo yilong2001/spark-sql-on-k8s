@@ -10,6 +10,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: spark-spark-operator
+  namespace: spark-operator
   labels:
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark

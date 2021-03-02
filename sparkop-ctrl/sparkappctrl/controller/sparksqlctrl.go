@@ -117,6 +117,7 @@ func (r *SparkAppCtrl) buildSparkAppParamWithSqlParam(sqlParam SparkSqlParam) Sp
 
 	appParam.ExtraConf = make(map[string]string)
 
+	appParam.ExtraConf["spark.sql.engine"] = "true"
 	appParam.ExtraConf["spark.thrift.jdbc.bind.port"] = "10019"
 	appParam.ExtraConf["spark.hadoop.javax.jdo.option.ConnectionUserName"] = r.cfg.MetaDb.User
 	appParam.ExtraConf["spark.hadoop.javax.jdo.option.ConnectionPassword"] = r.cfg.MetaDb.Password

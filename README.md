@@ -50,8 +50,93 @@ kubectl apply -f traefik-helm-chart/traefik/crds/
 
 # traefik v2 ingress
 ```
-创建 traefik v2 ingress resources
+创建 traefik v2 ingress resources。
+
+修改 loadbalance external ip , 如果不设置，则使用 k8s 集群内任一 ip 
+k8s/deploy/traefik-v2/004-service.yaml
+
+  externalIPs:
+    - xxx.xxx.xxx.xxx
+
 kubectl apply -f k8s/deploy/traefik-v2/
 ```
 
+# login docker repository
+```
+因为 spark-operator 和 spark  镜像保存在阿里云公共镜像仓库，需要登录阿里云镜像仓库才能访问：
+
+sudo docker login --username=yourAliyunZhangHao registry.cn-beijing.aliyuncs.com
+
+如果是使用其他 container 工具，使用相应命令登录。
+
+从阿里云下载镜像速度比较慢，建议镜像下载到本地仓库。
+如果使用本地镜像仓库，请修改相关镜像tag：
+
+1、registry.cn-beijing.aliyuncs.com/yilong2001/spark-operator:v1beta2-1.2.0-3.0.0
+
+2、registry.cn-beijing.aliyuncs.com/yilong2001/spark:v3.0.1-1216
+
+```
+
+# 创建 spark operator on k8s 控制器 (apply spark-operator)
+```
+kubectl apply -f k8s/deploy/spark-operator
+```
+
+# 创建 spark sql on k8s 控制器 (apply sparkop-ctrl)
+```
+首先构建镜像， 需要根据 image builder (docker / img / ... ) 设置执行命名。
+
+sh make.sh 
+```
+
+在创建控制前之前，需要修改的参数如下( 依赖 s3 和 mysql )：
+```
+在 k8s/deploy/sparkop-ctrl/sparkop-deployment.yml 中修改配置参数：
+
+s3兼容的存储，可以是在公有云上对象存储；或者使用 minio 自己搭建对象存储服务。
+
+--s3-upload-dir=s3://testbucket
+--s3-endpoint=192.168.42.1:9000
+--s3-accesskey=minioadmin
+--s3-secretkey=minioadmin
+
+元数据库，即 spark sql metastore 数据库，默认数据库名称为 hive ，请事先创建 hive 数据库；否则，需要配置有创建数据库权限的用户。目前只支持 mysql 数据库。
+
+--metadb-host=192.168.42.1
+--metadb-user=xxx
+--metadb-pw=xxx
+
+```
+
+# apply spark
+```
+kubectl apply -f k8s/deploy/spark/
+```
+
+# apply kyuubi server
+```
+kubectl apply -f k8s/deploy/kyuubi-server/
+```
+
+
+# jdbc connect
+```
+jdbc 连接可以附带 spark 运行参数，以设置 memory、 cpu core 等运行参数。
+
+如下例子：
+
+jdbc:hive2://spark-server-jdbc-ingress:10019/?spark.dynamicAllocation.enabled=true;spark.dynamicAllocation.maxExecutors=500;spark.shuffle.service.enabled=true;spark.executor.cores=3;spark.executor.memory=2g
+
+```
+
+# spark ui 查看 SQL 详情
+```
+访问如下 URL ，可以查看某个用户下 spark sql 的历史记录 ： 
+http://spark.mydomain.io/proxy/spark/spark-jobs/spark-sql-${user}
+
+例如，使用 admin 用户登录，则访问如下 URL：
+http://spark.mydomain.io/proxy/spark/spark-jobs/spark-sql-admin
+
+```
 

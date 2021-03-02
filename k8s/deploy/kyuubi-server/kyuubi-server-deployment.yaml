@@ -43,7 +43,7 @@ spec:
             containerPort: 10009
         args:
         - --conf
-        - spark.application.operator.service.name=spark-sparkop-svc
+        - spark.application.operator.service.name=spark-sparkop-svc.spark-operator.svc.cluster.local
         - --conf
         - spark.application.operator.service.port=8085
         resources:

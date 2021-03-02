@@ -1,0 +1,43 @@
+--- 
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: test-auth
+  namespace: spark-jobs
+spec:
+  basicAuth:
+    secret: authsecret
+
+---
+# htpasswd -nb admin admin | openssl base64
+apiVersion: v1
+kind: Secret
+metadata:
+  name: authsecret
+  namespace: spark-jobs
+data:
+  users: |2
+    YWRtaW46JGFwcjEkYTFzL2NDU04kVUVEbENYQmlVZFhySEp6RXE4RHM1LgoK
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: spark-jobs
+  name: spark-jobs-ingress-controller
+
+--- 
+# 绑定账号
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spark-jobs-ingress-controller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: traefik-ingress-controller
+subjects:
+  - kind: ServiceAccount
+    name: spark-jobs-ingress-controller
+    namespace: spark-jobs
+
