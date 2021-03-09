@@ -1,6 +1,9 @@
 # spark-sql-on-k8s
 最简单的 spark sql on kubernetes 生产环境部署方案
 
+# 架构和设计
+详细架构和设计内容，请参考 https://zhuanlan.zhihu.com/p/345214051
+
 # 介绍
 高效率、生产可用、支持快速部署的 Spark SQL Server 没有很好地解决方案。原生 Spark Thrift Server 不能很好解决多租户的问题，实现上很简单，对外提供 thrift 接口，内部通过共享 spark session 实现 spark sql 的处理，不适合在生产环境使用。
 
