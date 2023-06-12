@@ -151,5 +151,4 @@ http://spark.mydomain.io/proxy/spark/spark-jobs/spark-sql-admin
 
 ```
 
-# wx: yilong2001
 
